@@ -10,3 +10,7 @@ What is ako?
 =====
 
 Well, `'node'.split('').sort().join('')` derives `deno`, hence `'koa'.split('').sort().join('')` derives `ako`.
+
+# License
+
+[MIT](./LICENSE)
