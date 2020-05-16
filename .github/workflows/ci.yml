@@ -1,4 +1,4 @@
-name: ci
+name: ako-ci
 
 on: [push, pull_request]
 
