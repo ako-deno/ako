@@ -1,6 +1,6 @@
 import {
   Application,
-  ServerRequest,
+  Context,
 } from "../mod.ts";
 import {
   assert,
@@ -11,14 +11,15 @@ Deno.test("[ako] application", async function (): Promise<void> {
   const customHeaderkey = "x-ako";
   const customHeaderValue = "ako";
   const body = "Hello, I'm ako 🦕!";
-  async function handler(req: ServerRequest) {
+  async function handler(ctx: Context) {
     const headers = new Headers([[customHeaderkey, customHeaderValue]]);
-    req.respond({
+    ctx.req.respond({
       body,
       headers,
     });
   }
-  const app = new Application(handler);
+  const app = new Application();
+  app.use(handler);
 
   const server = app.listen({ port: 0 });
   const res = await fetch(
