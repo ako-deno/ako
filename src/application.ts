@@ -6,11 +6,12 @@ import {
   Response as ServerResponse,
   EventEmitter,
 } from "../deps.ts";
+import { compose, Middleware, Next } from "./compose.ts";
 import { Context } from "./context.ts";
 import { Request } from "./request.ts";
 import { Response } from "./response.ts";
 
-type HttpHandler = (context: Context) => Promise<any>;
+type HttpHandler = (req: ServerRequest, res: ServerResponse) => Promise<any>;
 
 interface ApplicationOptions {
   proxy?: boolean;
@@ -42,8 +43,11 @@ class Application extends EventEmitter {
         this.subdomainOffset = options.subdomainOffset || 2;
       }
     }
+
+    this.middleware = [];
   }
 
+  middleware: Middleware[];
   proxy: boolean = false;
   proxyIpHeader: string = "X-Forwarded-For";
   maxIpsCount: number = 0;
@@ -51,21 +55,49 @@ class Application extends EventEmitter {
   subdomainOffset: number = 2;
 
   private async handle(server: Server): Promise<void> {
+    const httpHandler = this.callback();
     for await (const req of server) {
-      if (this.handler) {
-        const res: ServerResponse = {
-          headers: new Headers(),
-        };
-        const context = this.createContext(req, res);
-        await this.handler(context);
-      }
+      const res: ServerResponse = {
+        headers: new Headers(),
+      };
+      await httpHandler(req, res);
     }
   }
 
-  private handler: HttpHandler | undefined;
+  /**
+   * Return a request handler callback
+   * for Deno's std http server.
+   *
+   * @return {HttpHandler}
+   * @api public
+   */
 
-  use(handler: HttpHandler): Application {
-    this.handler = handler;
+  callback(): HttpHandler {
+    const fn = compose(this.middleware);
+
+    const handleRequest: HttpHandler = (req, res) => {
+      const ctx = this.createContext(req, res);
+      return this.handleRequest(ctx, fn);
+    };
+
+    return handleRequest;
+  }
+
+  /**
+   * Handle request in callback.
+   *
+   * @api private
+   */
+
+  private handleRequest(ctx: Context, fnMiddleware: Middleware): Promise<any> {
+    ctx.res.status = 404;
+    const onerror = (err: Error) => ctx.onerror(err);
+    const handleResponse = () => respond(ctx);
+    return fnMiddleware(ctx).then(handleResponse).catch(onerror);
+  }
+
+  use(fn: Middleware): Application {
+    this.middleware.push(fn);
     return this;
   }
 
@@ -85,6 +117,14 @@ class Application extends EventEmitter {
     this.handle(server);
     return server;
   }
+}
+
+function respond(ctx: Context): void {
+  if (ctx.body) {
+    ctx.res.body = ctx.body;
+    ctx.res.status = 200;
+  }
+  ctx.req.respond(ctx.res);
 }
 
 export {

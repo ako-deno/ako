@@ -15,5 +15,11 @@ export class Context {
     this.res = response.res;
   }
 
+  body?: any;
+
+  onerror(err: Error): void {
+    console.error(err);
+  }
+
   [key: string]: any
 }

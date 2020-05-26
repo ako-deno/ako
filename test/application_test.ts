@@ -11,15 +11,16 @@ Deno.test("[ako] application", async function (): Promise<void> {
   const customHeaderkey = "x-ako";
   const customHeaderValue = "ako";
   const body = "Hello, I'm ako 🦕!";
-  async function handler(ctx: Context) {
-    const headers = new Headers([[customHeaderkey, customHeaderValue]]);
-    ctx.req.respond({
-      body,
-      headers,
-    });
-  }
   const app = new Application();
-  app.use(handler);
+  app.use((ctx, next) => {
+    ctx.val = 123;
+    return next!();
+  });
+  app.use((ctx) => {
+    assertEquals(ctx.val, 123);
+    ctx.body = body;
+    ctx.res.headers?.set(customHeaderkey, customHeaderValue);
+  });
 
   const server = app.listen({ port: 0 });
   const res = await fetch(
