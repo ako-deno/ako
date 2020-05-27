@@ -25,9 +25,10 @@ import { Context } from "./context.ts";
 
 export type Next = () => Promise<any>;
 
-export type Middleware = (ctx: Context, next?: Next) => Promise<any> | any;
+export type Middleware = (ctx: Context, next: Next) => any;
+export type ComposedMiddleware = (ctx: Context, next?: Next) => Promise<void>;
 
-export function compose(middleware: Middleware[]): Middleware {
+export function compose(middleware: Middleware[]): ComposedMiddleware {
   /**
    * @param {Context} context
    * @param {Next} next

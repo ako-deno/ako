@@ -6,7 +6,7 @@ import {
   Response as ServerResponse,
   EventEmitter,
 } from "../deps.ts";
-import { compose, Middleware, Next } from "./compose.ts";
+import { compose, Middleware, ComposedMiddleware, Next } from "./compose.ts";
 import { Context } from "./context.ts";
 import { Request } from "./request.ts";
 import { Response } from "./response.ts";
@@ -89,7 +89,10 @@ class Application extends EventEmitter {
    * @api private
    */
 
-  private handleRequest(ctx: Context, fnMiddleware: Middleware): Promise<any> {
+  private handleRequest(
+    ctx: Context,
+    fnMiddleware: ComposedMiddleware,
+  ): Promise<any> {
     ctx.res.status = 404;
     const onerror = (err: Error) => ctx.onerror(err);
     const handleResponse = () => respond(ctx);
