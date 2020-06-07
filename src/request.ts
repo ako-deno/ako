@@ -1,75 +1,96 @@
-import { ServerRequest, qsStringify, qsParse, isIP } from "../deps.ts";
-import { Application } from "./application.ts";
+/**
+(The MIT License)
+
+Copyright (c) 2019 Koa contributors
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+import {
+  qsStringify,
+  qsParse,
+  isIP,
+  typeofrequest,
+  Accepts,
+} from "../deps.ts";
 import { parse as contentTypeParse } from "../deps.ts";
+
+const fullHref = Symbol("fullHref");
+const queryCache = Symbol("queryCache");
+const memoizedURL = Symbol("memoizedURL");
+const _IP = Symbol("ip");
+const _ACCEPT = Symbol("accept");
 
 type QueryStringObject = { [key: string]: string[] | string };
 
-class Request {
-  constructor(req: ServerRequest, app: Application) {
-    this.req = req;
-    this.app = app;
-    this.originalUrl = req.url;
-  }
-
-  req: ServerRequest;
-  private app: Application;
-  private memoizedURL: URL | Object | undefined;
-  private _querycache: Map<string, QueryStringObject> = new Map();
-  private _ip: string | undefined;
-
-  /**
-   * Get full request URL.
-   */
-  private get fullHref(): string {
+const Request = {
+  get [fullHref](): string {
     // support: `GET http://example.com/foo`
     if (/^https?:\/\//i.test(this.url)) return this.url;
     return this.origin + this.url;
-  }
+  },
 
-  originalUrl: string;
+  [queryCache]: new Map(),
 
   /**
    * Return request header.
    */
   get header(): Headers {
-    return this.req.headers;
-  }
+    return (this as any).req.headers;
+  },
 
   /**
    * Set request header.
    */
   set header(val: Headers) {
-    this.req.headers = val;
-  }
+    (this as any).req.headers = val;
+  },
 
   /**
    * Return request header, alias as request.header
    */
   get headers(): Headers {
-    return this.req.headers;
-  }
+    return (this as any).req.headers;
+  },
 
   /**
    * Set request header, alias as request.header
    */
   set headers(val: Headers) {
-    this.req.headers = val;
-  }
+    (this as any).req.headers = val;
+  },
 
   /**
    * Get request URL.
    */
 
   get url(): string {
-    return this.req.url;
-  }
+    return (this as any).req.url;
+  },
 
   /**
    * Set request URL.
    */
   set url(val) {
-    this.req.url = val;
-  }
+    (this as any).req.url = val;
+  },
 
   /**
    * Get origin of URL.
@@ -77,103 +98,105 @@ class Request {
 
   get origin(): string {
     return `${this.protocol}://${this.host}`;
-  }
+  },
 
   /**
    * Get orignial full request URL.
    */
   get href(): string {
     // support: `GET http://example.com/foo`
-    if (/^https?:\/\//i.test(this.originalUrl)) return this.originalUrl;
-    return this.origin + this.originalUrl;
-  }
+    if (/^https?:\/\//i.test((this as any).originalUrl)) {
+      return (this as any).originalUrl;
+    }
+    return (this as any).origin + (this as any).originalUrl;
+  },
 
   /**
    * Get request method.
    */
   get method(): string {
-    return this.req.method;
-  }
+    return (this as any).req.method;
+  },
 
   /**
    * Set request method.
    */
   set method(val) {
-    this.req.method = val;
-  }
+    (this as any).req.method = val;
+  },
 
   /**
    * Get request pathname.
    */
   get path(): string {
-    const url = new URL(this.fullHref);
+    const url = new URL(this[fullHref]);
     return url.pathname;
-  }
+  },
 
   /**
    * Set pathname, retaining the query-string when present.
    */
   set path(path: string) {
-    const url = new URL(this.fullHref);
+    const url = new URL(this[fullHref]);
     if (url.pathname === path) {
       return;
     }
     url.pathname = path;
     this.url = `${path}${url.search}`;
-  }
+  },
 
   /**
    * Get parsed query-string.
    */
   get query(): QueryStringObject {
     const str = this.querystring;
-    const c = this._querycache;
+    const c = this[queryCache];
     if (c.has(str)) {
       return c.get(str) || {};
     }
     const queryObj = qsParse(str);
     c.set(str, queryObj);
     return queryObj;
-  }
+  },
 
   /**
    * Set query-string as an object.
    */
   set query(obj: QueryStringObject) {
     this.querystring = qsStringify(obj);
-  }
+  },
 
   /**
    * Get query string.
    */
   get querystring(): string {
-    if (!this.req) return "";
-    const url = new URL(this.fullHref);
+    if (!(this as any).req) return "";
+    const url = new URL(this[fullHref]);
     if (url.search.length >= 1) {
       return url.search.slice(1);
     } else {
       return "";
     }
-  }
+  },
 
   /**
    * Set querystring.
    */
   set querystring(str: string) {
-    const url = new URL(this.fullHref);
+    const url = new URL(this[fullHref]);
     if (url.search === `?${str}`) return;
     url.search = `?${str}`;
     this.url = `${url.pathname}?${str}`;
-  }
+  },
 
   /**
    * Get the search string. Same as the querystring
    * except it includes the leading ?.
    */
   get search(): string {
-    const url = new URL(this.fullHref);
+    const url = new URL(this[fullHref]);
     return url.search;
-  }
+  },
 
   /**
    * Set the search string. Same as
@@ -181,7 +204,7 @@ class Request {
    */
   set search(str: string) {
     this.querystring = str;
-  }
+  },
 
   /**
    * Parse the "Host" header field host
@@ -189,14 +212,14 @@ class Request {
    * proxy is enabled.
    */
   get host(): string {
-    const proxy = this.app.proxy;
+    const proxy = (this as any).app.proxy;
     let host = proxy && this.get("X-Forwarded-Host");
     if (!host) {
       host = this.get("Host");
     }
     if (!host) return "";
     return host.split(/\s*,\s*/, 1)[0];
-  }
+  },
 
   /**
    * Parse the "Host" header field hostname
@@ -208,22 +231,52 @@ class Request {
     if (!host) return "";
     if ("[" == host[0]) return (this.URL as URL).hostname || ""; // IPv6
     return host.split(":", 1)[0];
-  }
+  },
+
+  [memoizedURL]: undefined,
 
   /**
    * Get WHATWG parsed original URL.
    * Lazily memoized.
    */
-  get URL(): URL | Object {
-    if (this.memoizedURL == undefined) {
+
+  get URL(): URL | null {
+    if ((this as any)[memoizedURL] == undefined) {
       try {
-        this.memoizedURL = new URL(this.href);
+        (this as any)[memoizedURL] = new URL(this.href);
       } catch (err) {
-        this.memoizedURL = Object.create(null);
+        (this as any)[memoizedURL] = null;
       }
     }
-    return this.memoizedURL as URL | Object;
-  }
+    return (this as any)[memoizedURL];
+  },
+
+  /**
+   * Check if the request is fresh, aka
+   * Last-Modified and/or the ETag
+   * still match.
+   *
+   * @return {Boolean}
+   * @api public
+   */
+
+  get fresh(): boolean {
+    // todo: TBD
+    return false;
+  },
+
+  /**
+   * Check if the request is stale, aka
+   * "Last-Modified" and / or the "ETag" for the
+   * resource has changed.
+   *
+   * @return {Boolean}
+   * @api public
+   */
+
+  get stale(): boolean {
+    return !this.fresh;
+  },
 
   /**
    * Check if the request is idempotent.
@@ -231,14 +284,14 @@ class Request {
   get idempotent(): boolean {
     const methods = ["GET", "HEAD", "PUT", "DELETE", "OPTIONS", "TRACE"];
     return !!~methods.indexOf(this.method);
-  }
+  },
 
   /**
    * Return the request conn.
    */
   get socket(): Deno.Conn {
-    return this.req.conn;
-  }
+    return (this as any).req.conn;
+  },
 
   /**
    * Get the charset when present or undefined.
@@ -250,7 +303,7 @@ class Request {
     } catch (e) {
       return "";
     }
-  }
+  },
 
   /**
    * Return parsed Content-Length when present.
@@ -259,7 +312,7 @@ class Request {
     const len = this.get("Content-Length");
     if (len == "") return;
     return ~~len;
-  }
+  },
 
   /**
    * Return the protocol string "http" or "https"
@@ -270,10 +323,10 @@ class Request {
    * may be enabled.
    */
   get protocol(): string {
-    if (!this.app.proxy) return "http";
+    if (!(this as any).app.proxy) return "http";
     const proto = this.get("X-Forwarded-Proto");
     return proto ? proto.split(/\s*,\s*/, 1)[0] : "http";
-  }
+  },
 
   /**
    * Short-hand for:
@@ -282,7 +335,7 @@ class Request {
    */
   get secure(): boolean {
     return "https" == this.protocol;
-  }
+  },
 
   /**
    * When `app.proxy` is `true`, parse
@@ -293,14 +346,14 @@ class Request {
    * where "proxy2" is the furthest down-stream.
    */
   get ips(): string[] {
-    const proxy = this.app.proxy;
-    const val = this.get(this.app.proxyIpHeader);
+    const proxy = (this as any).app.proxy;
+    const val = this.get((this as any).app.proxyIpHeader);
     let ips = proxy && val ? val.split(/\s*,\s*/) : [];
-    if (this.app.maxIpsCount > 0) {
-      ips = ips.slice(-this.app.maxIpsCount);
+    if ((this as any).app.maxIpsCount > 0) {
+      ips = ips.slice(-(this as any).app.maxIpsCount);
     }
     return ips;
-  }
+  },
 
   /**
    * Return request's remote address
@@ -308,16 +361,16 @@ class Request {
    * the "X-Forwarded-For" ip address list and return the first one
    */
   get ip(): string {
-    if (!this._ip) {
-      this._ip = this.ips[0] ||
+    if (!(this as any)[_IP]) {
+      (this as any)[_IP] = this.ips[0] ||
         (this.socket.remoteAddr as Deno.NetAddr).hostname || "";
     }
-    return this._ip;
-  }
+    return (this as any)[_IP];
+  },
 
   set ip(_ip: string) {
-    this._ip = _ip;
-  }
+    (this as any)[_IP] = _ip;
+  },
 
   /**
    * Return subdomains as an array.
@@ -332,14 +385,163 @@ class Request {
    * If `app.subdomainOffset` is 3, this.subdomains is `["tobi"]`.
    */
   get subdomains(): string[] {
-    const offset = this.app.subdomainOffset;
+    const offset = (this as any).app.subdomainOffset;
     const hostname = this.hostname;
     if (isIP(hostname)) return [];
     return hostname
       .split(".")
       .reverse()
       .slice(offset);
-  }
+  },
+
+  /**
+   * Get accept object.
+   * Lazily memoized.
+   *
+   * @return {Object}
+   * @api private
+   */
+  get accept(): Accepts | null {
+    return (this as any)[_ACCEPT] ||
+      ((this as any)[_ACCEPT] = new Accepts((this as any).req.headers));
+  },
+
+  /**
+   * Set accept object.
+   *
+   * @param {Accepts}
+   * @api private
+   */
+  set accept(obj: Accepts | null) {
+    (this as any)[_ACCEPT] = obj;
+  },
+
+  /**
+   * Check if the given `type(s)` is acceptable, returning
+   * the best match when true, otherwise `false`, in which
+   * case you should respond with 406 "Not Acceptable".
+   *
+   * The `type` value may be a single mime type string
+   * such as "application/json", the extension name
+   * such as "json" or an array `["json", "html", "text/plain"]`. When a list
+   * or array is given the _best_ match, if any is returned.
+   *
+   * Examples:
+   *
+   *     // Accept: text/html
+   *     this.accepts('html');
+   *     // => "html"
+   *
+   *     // Accept: text/*, application/json
+   *     this.accepts('html');
+   *     // => "html"
+   *     this.accepts('text/html');
+   *     // => "text/html"
+   *     this.accepts('json', 'text');
+   *     // => "json"
+   *     this.accepts('application/json');
+   *     // => "application/json"
+   *
+   *     // Accept: text/*, application/json
+   *     this.accepts('image/png');
+   *     this.accepts('png');
+   *     // => false
+   *
+   *     // Accept: text/*;q=.5, application/json
+   *     this.accepts(['html', 'json']);
+   *     this.accepts('html', 'json');
+   *     // => "json"
+   *
+   * @param {Array} type(s)...
+   * @return {Array}
+   * @api public
+   */
+
+  accepts(types?: string[]): string[] {
+    return this.accept!.types(types);
+  },
+
+  /**
+   * Return accepted encodings or best fit based on `encodings`.
+   *
+   * Given `Accept-Encoding: gzip, deflate`
+   * an array sorted by quality is returned:
+   *
+   *     ['gzip', 'deflate']
+   *
+   * @param {String|Array} encoding(s)...
+   * @return {String|Array}
+   * @api public
+   */
+
+  acceptsEncodings(encodings?: string[]): string[] {
+    return this.accept!.encodings(encodings);
+  },
+
+  /**
+   * Return accepted charsets or best fit based on `charsets`.
+   *
+   * Given `Accept-Charset: utf-8, iso-8859-1;q=0.2, utf-7;q=0.5`
+   * an array sorted by quality is returned:
+   *
+   *     ['utf-8', 'utf-7', 'iso-8859-1']
+   *
+   * @param {String|Array} charset(s)...
+   * @return {String|Array}
+   * @api public
+   */
+
+  acceptsCharsets(charsets: string[]): string[] {
+    return this.accept!.charsets(charsets);
+  },
+
+  /**
+   * Return accepted languages or best fit based on `langs`.
+   *
+   * Given `Accept-Language: en;q=0.8, es, pt`
+   * an array sorted by quality is returned:
+   *
+   *     ['es', 'pt', 'en']
+   *
+   * @param {String|Array} lang(s)...
+   * @return {Array|String}
+   * @api public
+   */
+
+  acceptsLanguages(languages: string[]): string[] {
+    return this.accept!.languages(languages);
+  },
+
+  /**
+   * Check if the incoming request contains the "Content-Type"
+   * header field, and it contains any of the give mime `type`s.
+   * If there is no request body, `null` is returned.
+   * If there is no content type, `false` is returned.
+   * Otherwise, it returns the first `type` that matches.
+   *
+   * Examples:
+   *
+   *     // With Content-Type: text/html; charset=utf-8
+   *     this.is('html'); // => 'html'
+   *     this.is('text/html'); // => 'text/html'
+   *     this.is('text/*', 'application/json'); // => 'text/html'
+   *
+   *     // When Content-Type is application/json
+   *     this.is('json', 'urlencoded'); // => 'json'
+   *     this.is('application/json'); // => 'application/json'
+   *     this.is('html', 'application/*'); // => 'application/json'
+   *
+   *     this.is('html'); // => false
+   *
+   * @param {String|String[]} [type]
+   * @param {String[]} [types]
+   * @return {String|false|null}
+   * @api public
+   */
+
+  is(types: string[]): null | boolean | string {
+    return typeofrequest((this as any).req.headers, types);
+  },
 
   /**
    * Return request header.
@@ -359,7 +561,7 @@ class Request {
    *     // => ''
    */
   get(field: string): string {
-    const req = this.req;
+    const req = (this as any).req;
     switch (field = field.toLowerCase()) {
       case "referer":
       case "referrer":
@@ -367,7 +569,48 @@ class Request {
       default:
         return req.headers.get("field") || "";
     }
-  }
-}
+  },
+
+  /**
+   * Return the request mime type void of
+   * parameters such as "charset".
+   *
+   * @return {String}
+   * @api public
+   */
+
+  get type(): string {
+    const type = this.get("Content-Type");
+    if (!type) return "";
+    return type.split(";")[0];
+  },
+
+  /**
+   * Inspect implementation.
+   *
+   * @return {Object}
+   * @api public
+   */
+
+  inspect() {
+    if (!(this as any).req) return;
+    return this.toJSON();
+  },
+
+  /**
+   * Return JSON representation.
+   *
+   * @return {Object}
+   * @api public
+   */
+
+  toJSON() {
+    return [
+      this.method,
+      this.url,
+      this.header,
+    ];
+  },
+};
 
 export { Request, QueryStringObject };

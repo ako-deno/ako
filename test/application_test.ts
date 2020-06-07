@@ -1,6 +1,5 @@
 import {
   Application,
-  Context,
 } from "../mod.ts";
 import {
   assert,
@@ -35,7 +34,7 @@ Deno.test("[ako] double middleware", async function (): Promise<void> {
   app.use((ctx) => {
     assertEquals(ctx.val, 123);
     ctx.body = body;
-    ctx.res.headers?.set(customHeaderkey, customHeaderValue);
+    ctx.set(customHeaderkey, customHeaderValue);
   });
 
   const server = app.listen({ port: 0 });
