@@ -12,11 +12,10 @@ Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 import {
   ServerRequest,
   Response as ServerResponse,
-} from "https://deno.land/std/http/server.ts";
+  EventEmitter,
+} from "../deps.ts";
 import * as compose from "./compose.ts";
 import { Accepts } from "../deps.ts";
-
-import { EventEmitter } from "https://deno.land/std/node/events.ts";
 
 export interface ContextDelegatedRequest {
   /**

@@ -49,7 +49,6 @@ import {
 import {
   byteLength,
   statusEmpty,
-  statusRedirect,
   isReader,
 } from "./utill.ts";
 
