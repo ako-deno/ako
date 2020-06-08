@@ -16,7 +16,7 @@ Well, `'node'.split('').sort().join('')` derives `deno`, hence `'koa'.split('').
 ```js
 import {
   Application,
-} from "https://raw.githubusercontent.com/ako-deno/ako/master/mod.ts";
+} from "https://deno.land/x/gh:ako-deno:ako/mod.ts";
 
 const app = new Application();
 app.use((ctx) => {
