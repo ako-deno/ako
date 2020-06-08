@@ -14,8 +14,8 @@ jobs:
 
       - name: Install and Build 🔧
         run: |
-          npm i typedoc -g
-          make typedoc
+          npm i typedoc
+          npx typedoc --ignoreCompilerErrors --out ./docs --mode module --includeDeclarations --excludeExternals ./src
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@releases/v3

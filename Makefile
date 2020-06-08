@@ -1,4 +1,4 @@
-.PHONY: build ci doc fmt fmt-check lock precommit test typedoc
+.PHONY: build ci doc fmt fmt-check lock precommit test
 
 build:
 	@deno run --allow-env --lock=lock.json --reload mod.ts
@@ -26,6 +26,3 @@ precommit:
 
 test:
 	@deno test --allow-env --allow-net ./test
-
-typedoc:
-	@typedoc --ignoreCompilerErrors --out ./docs --mode module --includeDeclarations --excludeExternals ./src
