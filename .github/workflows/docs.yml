@@ -16,6 +16,7 @@ jobs:
         run: |
           npm i typedoc typescript
           npx typedoc --ignoreCompilerErrors --out ./docs --mode modules --includeDeclarations --excludeExternals ./src
+          cp -f ./ako.svg ./docs/ako.svg
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@releases/v3
