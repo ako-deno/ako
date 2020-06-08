@@ -15,11 +15,11 @@ jobs:
         with:
           deno-version: 1.0.0
       - run: deno --version
-      - run: make test
+      - run: make ci
 
       - uses: actions/checkout@v2
       - uses: denolib/setup-deno@master
         with:
           deno-version: 1.0.5
       - run: deno --version
-      - run: make test
+      - run: make ci
