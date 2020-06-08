@@ -521,7 +521,7 @@ const Response = {
   remove(field: string) {
     if (this.headerSent) return;
 
-    (this as any).res.remove(field);
+    (this as any).res.headers.delete(field);
   },
 
   /**

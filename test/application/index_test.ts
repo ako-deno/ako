@@ -9,7 +9,6 @@ import {
   assertEquals,
   assertStrictEq,
   assertNotEquals,
-  assertThrows,
 } from "../deps.ts";
 
 describe("app", () => {

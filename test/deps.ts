@@ -7,3 +7,4 @@ export {
   assertNotEquals,
   assertThrows,
 } from "https://deno.land/std@0.55.0/testing/asserts.ts";
+export { default as mm } from "https://unsafe-production.jspm.io/mm";

@@ -19,10 +19,12 @@ fmt-check:
 
 lock:
 	@deno run --allow-env --lock=lock.json --lock-write --reload mod.ts
+	@deno run --allow-env --allow-net --lock=test/lock.json --lock-write --reload ./test/deps.ts
 
 precommit:
 	@make fmt
 	@make lock
 
 test:
+	@deno cache --lock=test/lock.json ./test/deps.ts
 	@deno test --allow-env --allow-net ./test
