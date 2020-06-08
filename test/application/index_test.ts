@@ -5,6 +5,7 @@ import { describe, it } from "../deps.ts";
 import { HttpError, createError } from "../../deps.ts";
 import { HttpError as AkoHttpError } from "../../mod.ts";
 import {
+  assert,
   assertEquals,
   assertStrictEq,
   assertNotEquals,
@@ -48,8 +49,6 @@ describe("app", () => {
   it("should have a exported property `HttpError` from http-errors library", () => {
     assertNotEquals(AkoHttpError, undefined);
     assertEquals(AkoHttpError, HttpError);
-    assertThrows(() => {
-      throw createError(500, "test error");
-    }, AkoHttpError);
+    assert(createError(500, "test error") instanceof AkoHttpError);
   });
 });
