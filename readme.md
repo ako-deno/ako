@@ -4,24 +4,27 @@
 
 ![ci](https://github.com/ako-deno/ako/workflows/ci/badge.svg?branch=master)
 
-Expressive middleware for deno using async functions.
+Expressive HTTP middleware framework for deno using async functions. Aiming to port [Koa](https://github.com/koajs/koa) to Deno.
 
 What is ako?
 =====
 
 Well, `'node'.split('').sort().join('')` derives `deno`, hence `'koa'.split('').sort().join('')` derives `ako`.
 
-# Develop in Visual studio code
+# Usage
 
-Install plugin [vscode-deno](https://marketplace.visualstudio.com/items?itemName=denoland.vscode-deno)
+```js
+import {
+  Application,
+} from "https://raw.githubusercontent.com/ako-deno/ako/master/mod.ts";
 
-Install typescript-deno-plugin and typescript
+const app = new Application();
+app.use((ctx) => {
+  ctx.body = "Hello Ako!";
+});
 
-```bash
-npm install --save-dev typescript-deno-plugin typescript
+app.listen({ port: 3000 });
 ```
-
-Use a workspace version of TypeScript in VSC.
 
 # License
 
