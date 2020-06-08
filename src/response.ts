@@ -150,7 +150,7 @@ const Response = {
     // no content
     if (null == val) {
       if (!statusEmpty[this.status]) this.status = 204;
-      if (val === null) this._explicitNullBody = true;
+      if (val === null) (this as any)._explicitNullBody = true;
       this.remove("Content-Type");
       this.remove("Content-Length");
       this.remove("Transfer-Encoding");
@@ -575,8 +575,6 @@ const Response = {
    */
   flushHeaders(): void {
   },
-
-  _explicitNullBody: false,
 };
 
 export { Response };

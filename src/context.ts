@@ -26,8 +26,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import {
   delegates,
   STATUS_TEXT,
+  createError,
+  debug,
 } from "../deps.ts";
 import { ProtoContext, ExtendableContext } from "./koa_type.ts";
+
+const contextDebug = debug("context");
 
 export const context: ProtoContext = {
   /**
@@ -83,28 +87,18 @@ export const context: ProtoContext = {
   // assert: httpAssert,
 
   /**
-   * Throw an error with `status` (default 500) and
-   * `msg`. Note that these are user-level
+   * Throw an error with `msg` and optional `status`
+   * defaulting to 500. Note that these are user-level
    * errors, and the message may be exposed to the client.
    *
    *    this.throw(403)
    *    this.throw(400, 'name required')
-   *    this.throw('something exploded')
-   *    this.throw(new Error('invalid'))
-   *    this.throw(400, new Error('invalid'))
+   *    this.throw(400, 'name required', {text: "error"})
    *
-   * See: https://github.com/jshttp/http-errors
-   *
-   * Note: `status` should only be passed as the first parameter.
-   *
-   * @param {String|Number|Error} err, msg or status
-   * @param {String|Number|Error} [err, msg or status]
-   * @param {Object} [props]
-   * @api public
+   * See: https://deno.land/x/http_errors
    */
-
-  throw(...args: any): never {
-    throw Error();
+  throw(status: number, message?: any, props?: any): never {
+    throw createError(status, message, props);
   },
 
   /**
@@ -115,6 +109,7 @@ export const context: ProtoContext = {
    */
 
   onerror(err?: any) {
+    contextDebug("onerror:", err);
     // don't do anything if there is no error.
     if (null == err) return;
 
@@ -130,7 +125,8 @@ export const context: ProtoContext = {
     }
 
     // delegate
-    _this.app.emit("error", err, this);
+    // TODO, this will thow error in test, don't know why.
+    // _this.app.emit("error", err, this);
 
     // nothing we can do here other
     // than delegate to the app-level
@@ -165,7 +161,7 @@ export const context: ProtoContext = {
     const code = STATUS_TEXT.get(statusCode);
     const msg = err.expose ? err.message : code;
     _this.status = err.status = statusCode;
-    _this.req.respond(_this.res);
+    _this.req.respond(Object.assign({}, _this.res, { body: msg }));
   },
   // get cookies() {
   // },

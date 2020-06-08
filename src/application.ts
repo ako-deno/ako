@@ -178,9 +178,12 @@ class Application<
   /**
    * Shorthand for:
    *
-   *    serve(addr: string | HTTPOptions);
+   *    serve(addr?: string | HTTPOptions);
    */
-  listen(addr: string | HTTPOptions): Server {
+  listen(addr?: string | HTTPOptions): Server {
+    if (!addr) {
+      addr = { port: 0 };
+    }
     const server = serve(addr);
     this.handle(server);
     return server;

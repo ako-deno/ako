@@ -13,6 +13,7 @@ import {
   ServerRequest,
   Response as ServerResponse,
   EventEmitter,
+  Props,
 } from "../deps.ts";
 import * as compose from "./compose.ts";
 import { Accepts } from "../deps.ts";
@@ -573,17 +574,13 @@ export interface ProtoContext {
    * errors, and the message may be exposed to the client.
    *
    *    this.throw(403)
-   *    this.throw('name required', 400)
    *    this.throw(400, 'name required')
-   *    this.throw('something exploded')
-   *    this.throw(new Error('invalid'), 400);
-   *    this.throw(400, new Error('invalid'));
+   *    this.throw(400, 'name required', {text: "error"})
    *
-   * See: https://github.com/jshttp/http-errors
+   * See: https://deno.land/x/http_errors
    */
-  throw(message: string, code?: number, properties?: {}): never;
-  throw(status: number): never;
-  throw(...properties: Array<number | string | {}>): never;
+  throw(status: number, message?: string, props?: Props): never;
+  throw(status: number, props: Props): never;
 
   /**
    * Default error handling.
@@ -612,7 +609,7 @@ export interface Response extends BaseResponse {
   res: ServerResponse;
   ctx: Context;
   request: Request;
-  _explicitNullBody: boolean;
+  _explicitNullBody: boolean | undefined;
 }
 
 export interface ExtendableContext extends BaseContext {
