@@ -14,7 +14,7 @@ jobs:
 
       - name: Install and Build 🔧
         run: |
-          npm i typedoc
+          npm i typedoc typescript
           npx typedoc --ignoreCompilerErrors --out ./docs --mode module --includeDeclarations --excludeExternals ./src
 
       - name: Deploy 🚀
