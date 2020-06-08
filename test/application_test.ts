@@ -1,10 +1,7 @@
 import {
   Application,
 } from "../mod.ts";
-import { superdeno, describe, it } from "./deps.ts";
-import {
-  assertEquals,
-} from "https://deno.land/std/testing/asserts.ts";
+import { assertEquals, superdeno, describe, it } from "./deps.ts";
 
 describe("Ako", () => {
   it("single middleware", async function (): Promise<void> {
