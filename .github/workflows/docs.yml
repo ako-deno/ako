@@ -15,7 +15,7 @@ jobs:
       - name: Install and Build 🔧
         run: |
           npm i typedoc typescript
-          npx typedoc --ignoreCompilerErrors --out ./docs --mode module --includeDeclarations --excludeExternals ./src
+          npx typedoc --ignoreCompilerErrors --out ./docs --mode modules --includeDeclarations --excludeExternals ./src
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@releases/v3
