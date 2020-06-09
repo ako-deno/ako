@@ -348,7 +348,7 @@ export interface ContextDelegatedResponse {
    *     this.type = 'application/json';
    *     this.type = 'png';
    */
-  type: string;
+  type: string | null;
 
   /**
    * Get the Last-Modified date in Date form, if it exists.

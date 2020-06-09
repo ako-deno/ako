@@ -26,3 +26,12 @@ export function isReader(value: any): value is Deno.Reader {
   return typeof value === "object" && "read" in value &&
     typeof value.read === "function";
 }
+
+export function closeReader(reader?: any) {
+  if (reader && isReader(reader) && (reader as any).close) {
+    try {
+      (reader as any).close();
+    } catch (e) {
+    }
+  }
+}

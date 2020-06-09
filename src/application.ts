@@ -50,6 +50,7 @@ import {
   byteLength,
   statusEmpty,
   isReader,
+  closeReader,
 } from "./utill.ts";
 
 const appDebug = debug("ako:application");
@@ -113,6 +114,7 @@ class Application<
       };
       appDebug("handle request start");
       await httpHandler(req, res);
+      closeReader(res.body);
       appDebug("handle request end");
     }
   }
@@ -127,6 +129,8 @@ class Application<
 
   callback(): (req: ServerRequest, res: ServerResponse) => Promise<any> {
     const fn = compose(this.middleware);
+
+    if (!this.listenerCount("error")) this.on("error", this.onerror);
 
     const handleRequest = (req: ServerRequest, res: ServerResponse) => {
       const ctx = this.createContext(req, res);
@@ -257,7 +261,9 @@ class Application<
         ctx.response.remove("Content-Type");
         ctx.response.remove("Transfer-Encoding");
         appDebug("respond: explicit null body");
-        return ctx.req.respond(Object.assign({}, ctx.res, { body }));
+        const _res = Object.assign({}, ctx.res);
+        _res.body = undefined;
+        return ctx.req.respond(_res);
       }
       if (ctx.req.protoMajor >= 2) {
         body = String(code);

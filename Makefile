@@ -27,4 +27,4 @@ precommit:
 
 test:
 	@deno cache --lock=test/lock.json ./test/deps.ts
-	@deno test --allow-env --allow-net ./test
+	@deno test --allow-env --allow-net --allow-read ./test

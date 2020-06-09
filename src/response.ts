@@ -139,7 +139,7 @@ const Response = {
   /**
    * Set response body.
    *
-   * @param {String|Buffer|Object|Stream} val
+   * @param {String|Uint|Object|Reader} val
    * @api public
    */
 
@@ -315,7 +315,7 @@ const Response = {
    * @api public
    */
 
-  set type(type: string) {
+  set type(type: string | null) {
     if (type) {
       const _type = contentType(type);
       if (_type) {
@@ -393,7 +393,7 @@ const Response = {
    * @api public
    */
 
-  get type(): string {
+  get type(): string | null {
     const type = this.get("Content-Type");
     if (!type) return "";
     return type.split(";", 1)[0];
@@ -410,7 +410,7 @@ const Response = {
    */
 
   is(types: string[]) {
-    return is(this.type, types);
+    return is(this.type!, types);
   },
 
   /**

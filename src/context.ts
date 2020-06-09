@@ -125,8 +125,7 @@ export const context: ProtoContext = {
     }
 
     // delegate
-    // TODO, this will thow error in test, don't know why.
-    // _this.app.emit("error", err, this);
+    _this.app.emit("error", err, this);
 
     // nothing we can do here other
     // than delegate to the app-level
