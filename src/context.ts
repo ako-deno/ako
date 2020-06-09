@@ -31,7 +31,7 @@ import {
 } from "../deps.ts";
 import { ProtoContext, ExtendableContext } from "./koa_type.ts";
 
-const contextDebug = debug("context");
+const contextDebug = debug("ako:context");
 
 export const context: ProtoContext = {
   /**

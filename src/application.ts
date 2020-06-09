@@ -52,7 +52,7 @@ import {
   isReader,
 } from "./utill.ts";
 
-const appDebug = debug("application");
+const appDebug = debug("ako:application");
 
 interface ApplicationOptions {
   proxy?: boolean;
