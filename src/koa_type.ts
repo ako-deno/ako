@@ -15,6 +15,7 @@ import {
   EventEmitter,
   Props,
 } from "../deps.ts";
+import { assert } from "./lib/assert.ts";
 import * as compose from "./compose.ts";
 import { Accepts } from "../deps.ts";
 
@@ -566,7 +567,7 @@ export interface ProtoContext {
    *
    * See: https://github.com/jshttp/http-assert
    */
-  // assert: typeof httpAssert;
+  assert: typeof assert;
 
   /**
    * Throw an error with `msg` and optional `status`

@@ -29,6 +29,7 @@ import {
   createError,
   debug,
 } from "../deps.ts";
+import { assert } from "./lib/assert.ts";
 import { ProtoContext, ExtendableContext } from "./koa_type.ts";
 
 const contextDebug = debug("ako:context");
@@ -84,7 +85,7 @@ export const context: ProtoContext = {
    * @api public
    */
 
-  // assert: httpAssert,
+  assert: assert,
 
   /**
    * Throw an error with `msg` and optional `status`

@@ -27,6 +27,7 @@ export { is, typeofrequest, hasBody } from "https://deno.land/x/type_is/mod.ts";
 export { Accepts } from "https://deno.land/x/accepts/mod.ts";
 export {
   assert,
+  equal,
 } from "https://deno.land/std@0.53.0/testing/asserts.ts";
 export { encoder } from "https://deno.land/std@0.53.0/encoding/utf8.ts";
 export { vary, append } from "https://deno.land/x/vary/mod.ts";
