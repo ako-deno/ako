@@ -38,9 +38,9 @@ const memoizedURL = Symbol("memoizedURL");
 const _IP = Symbol("ip");
 const _ACCEPT = Symbol("accept");
 
-type QueryStringObject = { [key: string]: string[] | string };
+export type QueryStringObject = { [key: string]: string[] | string };
 
-const Request = {
+export const Request = {
   get [fullHref](): string {
     // support: `GET http://example.com/foo`
     if (/^https?:\/\//i.test(this.url)) return this.url;
@@ -612,5 +612,3 @@ const Request = {
     ];
   },
 };
-
-export { Request, QueryStringObject };

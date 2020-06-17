@@ -205,7 +205,7 @@ class Application<
     };
   }
 
-  onerror(err: Error): void {
+  onerror(err: any): void {
     if (!(err instanceof Error)) {
       throw new TypeError(`non-error thrown: ${JSON.stringify(err)}`);
     }
@@ -247,7 +247,9 @@ class Application<
     if ("HEAD" === ctx.method) {
       if (!ctx.response.has("Content-Length")) {
         const { length } = ctx.response;
-        if (Number.isInteger(length)) ctx.length = length;
+        if (length) {
+          ctx.length = length;
+        }
       }
       appDebug("respond: HEAD response");
       const _res = Object.assign({}, ctx.res);

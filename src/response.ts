@@ -37,17 +37,17 @@ import {
   statusRedirect,
   isReader,
 } from "./utill.ts";
+import { BaseResponse } from "./koa_type.ts";
 
 const _explicitStatus = Symbol("_explicitStatus");
 
-const Response = {
+export const Response: BaseResponse = {
   /**
    * Return the request socket.
    *
    * @return {Connection}
    * @api public
    */
-
   get socket(): Deno.Conn {
     return (this as any).res.socket;
   },
@@ -110,7 +110,7 @@ const Response = {
    */
 
   get message() {
-    return STATUS_TEXT.get(this.status);
+    return STATUS_TEXT.get(this.status) ?? "";
   },
 
   /**
@@ -199,8 +199,10 @@ const Response = {
    * @api public
    */
 
-  set length(n) {
-    this.set("Content-Length", n);
+  set length(n: number | undefined) {
+    if (n) {
+      this.set("Content-Length", n + "");
+    }
   },
 
   /**
@@ -294,10 +296,10 @@ const Response = {
    * @api public
    */
 
-  attachment(filename: string, options: any) {
-    // if (filename) this.type = extname(filename);
-    // this.set('Content-Disposition', contentDisposition(filename, options));
-  },
+  // attachment(filename: string, options: any) {
+  //   // if (filename) this.type = extname(filename);
+  //   // this.set('Content-Disposition', contentDisposition(filename, options));
+  // },
 
   /**
    * Set Content-Type response header with `type` through `mime.lookup()`
@@ -468,7 +470,7 @@ const Response = {
    * @api public
    */
 
-  set(field: any, val: any | any[]) {
+  set(field: any, val?: any | any[]) {
     if (this.headerSent) return;
 
     if (2 === arguments.length) {
@@ -576,5 +578,3 @@ const Response = {
   flushHeaders(): void {
   },
 };
-
-export { Response };

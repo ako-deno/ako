@@ -23,12 +23,12 @@ export interface ContextDelegatedRequest {
   /**
    * Return request header.
    */
-  header: any;
+  header: Headers;
 
   /**
    * Return request header, alias as request.header
    */
-  headers: any;
+  headers: Headers;
 
   /**
    * Get/Set request URL.
@@ -300,7 +300,7 @@ export interface ContextDelegatedResponse {
    * Return parsed response Content-Length when present.
    * Set Content-Length field to `n`.
    */
-  length: number;
+  length: number | undefined;
 
   /**
    * Check if a header has been written to the socket.
@@ -358,7 +358,7 @@ export interface ContextDelegatedResponse {
    *     this.response.lastModified = new Date();
    *     this.response.lastModified = '2013-09-13';
    */
-  lastModified: Date;
+  lastModified: Date | undefined | string;
 
   /**
    * Get/Set the ETag of a response.
@@ -493,12 +493,12 @@ export interface BaseResponse extends ContextDelegatedResponse {
   /**
    * Return response header.
    */
-  header: any;
+  header: Headers;
 
   /**
    * Return response header, alias as response.header
    */
-  headers: any;
+  headers: Headers;
 
   /**
    * Check whether the response is one of the listed types.
@@ -508,9 +508,7 @@ export interface BaseResponse extends ContextDelegatedResponse {
    * @return {String|false}
    * @api public
    */
-  is(): string;
-  is(...types: string[]): string;
-  is(types: string[]): string;
+  is(types: string[]): string | boolean;
 
   /**
    * Return response header. If the header is not set, will return an empty
