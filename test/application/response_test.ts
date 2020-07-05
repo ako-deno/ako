@@ -44,12 +44,7 @@ describe("app.response", () => {
     });
     superdeno(app3)
       .get("/")
-      .expect(404)
-      .end((err, res) => {
-        assertEquals(err.message, "Not Found");
-        assertEquals(res.text, "404");
-        done();
-      });
+      .expect(404, done);
   });
 
   it("should set ._explicitNullBody correctly", async () => {

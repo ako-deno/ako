@@ -8,32 +8,27 @@ import {
 } from "../deps.ts";
 
 describe("ctx.onerror(err)", () => {
-  it("should respond", (done) => {
+  it("should respond", async () => {
     const app = new Application();
 
     app.use((ctx, next) => {
       ctx.body = "something else";
-
       ctx.throw(418, "boom");
     });
 
     const server = app.listen();
 
-    superdeno(server)
+    const res = await superdeno(server)
       .head("/")
       .expect(418)
       .expect("Content-Length", "4")
-      .expect("Content-Type", "text/plain; charset=utf-8")
-      .end((err, res) => {
-        assertEquals(err.message, "I'm a teapot");
-        assertEquals(res.status, 418);
-        // TODO: https://github.com/asos-craigmorten/superdeno/issues/1
-        // assertEquals(res.text, "boom");
-        done();
-      });
+      .expect("Content-Type", "text/plain; charset=utf-8");
+
+    // TODO: https://github.com/asos-craigmorten/superdeno/issues/11
+    // assertEquals(res.text, "boom");
   });
 
-  it("should unset all headers", (done) => {
+  it("should unset all headers", async () => {
     const app = new Application();
 
     app.use((ctx, next) => {
@@ -46,23 +41,18 @@ describe("ctx.onerror(err)", () => {
 
     const server = app.listen();
 
-    superdeno(server)
+    const res = await superdeno(server)
       .head("/")
       .expect(418)
       .expect("Content-Length", "4")
-      .expect("Content-Type", "text/plain; charset=utf-8")
-      .end((err, res) => {
-        assertEquals(err.message, "I'm a teapot");
-        assertEquals(res.status, 418);
-        // TODO: https://github.com/asos-craigmorten/superdeno/issues/1
-        // assertEquals(res.text, "boom");
-        assert(!(res as any).headers.vary);
-        assert(!(res as any).headers["x-csrf-token"]);
-        done();
-      });
+      .expect("Content-Type", "text/plain; charset=utf-8");
+    // TODO: https://github.com/asos-craigmorten/superdeno/issues/11
+    // assertEquals(res.text, "boom");
+    assert(!(res as any).headers.vary);
+    assert(!(res as any).headers["x-csrf-token"]);
   });
 
-  it("should set headers specified in the error", (done) => {
+  it("should set headers specified in the error", async () => {
     const app = new Application();
 
     app.use((ctx, next) => {
@@ -81,22 +71,18 @@ describe("ctx.onerror(err)", () => {
 
     const server = app.listen();
 
-    superdeno(server)
+    const res = await superdeno(server)
       .head("/")
       .expect(418)
       .expect("Content-Length", "4")
       .expect("Content-Type", "text/plain; charset=utf-8")
-      .expect("X-New-Header", "Value")
-      .end((err, res) => {
-        assertEquals(err.message, "I'm a teapot");
-        assertEquals(res.status, 418);
-        // TODO: https://github.com/asos-craigmorten/superdeno/issues/1
-        // assertEquals(res.text, "boom");
-        assert(!(res as any).headers.vary);
-        assert(!(res as any).headers["x-csrf-token"]);
-        assert((res as any).headers["x-new-header"]);
-        done();
-      });
+      .expect("X-New-Header", "Value");
+
+    // TODO: https://github.com/asos-craigmorten/superdeno/issues/11
+    // assertEquals(res.text, "boom");
+    assert(!(res as any).headers.vary);
+    assert(!(res as any).headers["x-csrf-token"]);
+    assert((res as any).headers["x-new-header"]);
   });
 
   it("should set status specified in the error using statusCode", (done) => {
@@ -113,11 +99,9 @@ describe("ctx.onerror(err)", () => {
     superdeno(server)
       .head("/")
       .expect(404)
-      .expect("Content-Type", "text/plain; charset=utf-8")
-      .expect("Not Found")
-      .end((err, res) => {
-        done();
-      });
+      .expect("Content-Type", "text/plain; charset=utf-8", done);
+    // TODO: https://github.com/asos-craigmorten/superdeno/issues/11
+    //.expect("Not Found", done)
   });
 
   describe("when invalid err.status", () => {
@@ -136,11 +120,9 @@ describe("ctx.onerror(err)", () => {
         superdeno(server)
           .head("/")
           .expect(500)
-          .expect("Content-Type", "text/plain; charset=utf-8")
-          .expect("Internal Server Error")
-          .end((err, res) => {
-            done();
-          });
+          .expect("Content-Type", "text/plain; charset=utf-8", done);
+        // TODO: https://github.com/asos-craigmorten/superdeno/issues/11
+        // .expect("Internal Server Error")
       });
     });
     describe("when ENOENT error", () => {
@@ -159,11 +141,9 @@ describe("ctx.onerror(err)", () => {
         superdeno(server)
           .head("/")
           .expect(404)
-          .expect("Content-Type", "text/plain; charset=utf-8")
-          .expect("Not Found")
-          .end((err, res) => {
-            done();
-          });
+          .expect("Content-Type", "text/plain; charset=utf-8", done);
+        // TODO: https://github.com/asos-craigmorten/superdeno/issues/11
+        // .expect("Not Found")
       });
     });
     describe("not http status code", () => {
@@ -182,11 +162,9 @@ describe("ctx.onerror(err)", () => {
         superdeno(server)
           .head("/")
           .expect(500)
-          .expect("Content-Type", "text/plain; charset=utf-8")
-          .expect("Internal Server Error")
-          .end((err, res) => {
-            done();
-          });
+          .expect("Content-Type", "text/plain; charset=utf-8", done);
+        // TODO: https://github.com/asos-craigmorten/superdeno/issues/11
+        // .expect("Internal Server Error")
       });
     });
   });
@@ -203,11 +181,9 @@ describe("ctx.onerror(err)", () => {
       superdeno(server)
         .head("/")
         .expect(500)
-        .expect("Content-Type", "text/plain; charset=utf-8")
-        .expect("Internal Server Error")
-        .end((err, res) => {
-          done();
-        });
+        .expect("Content-Type", "text/plain; charset=utf-8", done);
+      // TODO: https://github.com/asos-craigmorten/superdeno/issues/11
+      // .expect("Internal Server Error")
     });
 
     /*
@@ -228,11 +204,9 @@ describe("ctx.onerror(err)", () => {
 
       superdeno(server)
         .head("/")
-        .expect(500)
-        .expect("Internal Server Error")
-        .end((err, res) => {
-          done();
-        });
+        .expect(500, done);
+      // TODO: https://github.com/asos-craigmorten/superdeno/issues/11
+      // .expect("Internal Server Error")
     });
     */
   });

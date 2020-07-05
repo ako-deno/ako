@@ -249,12 +249,7 @@ describe("app.respond", () => {
 
       superdeno(server)
         .head("/")
-        .expect(404)
-        .end((err, res) => {
-          assertEquals(err.message, "Not Found");
-          assertEquals(res.status, 404);
-          done();
-        });
+        .expect(404, done);
     });
 
     it('should respond with a 200 if body = ""', async () => {
@@ -295,12 +290,7 @@ describe("app.respond", () => {
       const server = app.listen();
       superdeno(server)
         .head("/")
-        .expect(404)
-        .end((err, res) => {
-          assertEquals(err.message, "Not Found");
-          assertEquals(res.status, 404);
-          done();
-        });
+        .expect(404, done);
     });
   });
 
@@ -319,11 +309,7 @@ describe("app.respond", () => {
           .get("/")
           .expect(400)
           .expect("Content-Length", "11")
-          .expect("Bad Request")
-          .end((err, res) => {
-            assertEquals(err.message, "Bad Request");
-            done();
-          });
+          .expect("Bad Request", done);
       });
     });
 
@@ -380,12 +366,7 @@ describe("app.respond", () => {
           .get("/")
           .expect(304)
           .expect("content-length", "0")
-          .expect("")
-          .end((err, res) => {
-            assertEquals(err.message, "Not Modified");
-            assertEquals((res as any).headers["content-type"], undefined);
-            done();
-          });
+          .expect("", done);
       });
     });
   });
@@ -461,12 +442,7 @@ describe("app.respond", () => {
         .get("/")
         .expect(304)
         .expect("content-length", "0")
-        .expect("")
-        .end((err, res) => {
-          assertEquals(err.message, "Not Modified");
-          assertEquals((res as any).headers["content-type"], undefined);
-          done();
-        });
+        .expect("", done);
     });
   });
 
@@ -637,13 +613,7 @@ describe("app.respond", () => {
 
       superdeno(app)
         .get("/")
-        .expect(500)
-        .end((err, res) => {
-          assertEquals(err.message, "Internal Server Error");
-          assertEquals(res.status, 500);
-          assert(isErrHandled);
-          done();
-        });
+        .expect(500, done);
     });
 
     describe("with an .expose property", () => {
@@ -659,13 +629,7 @@ describe("app.respond", () => {
 
         superdeno(app)
           .get("/")
-          .expect(403)
-          .end((err, res) => {
-            assertEquals(err.message, "Forbidden");
-            assertEquals(res.status, 403);
-            assertEquals(res.text, "sorry!");
-            done();
-          });
+          .expect(403, done);
       });
     });
 
@@ -681,13 +645,7 @@ describe("app.respond", () => {
 
         superdeno(app)
           .get("/")
-          .expect(403)
-          .end((err, res) => {
-            assertEquals(err.message, "Forbidden");
-            assertEquals(res.status, 403);
-            assertEquals(res.text, "Forbidden");
-            done();
-          });
+          .expect(403, done);
       });
     });
 
@@ -702,13 +660,8 @@ describe("app.respond", () => {
 
       superdeno(server)
         .get("/")
-        .expect(500, "Internal Server Error")
-        .end((err, res) => {
-          assertEquals(err.message, "Internal Server Error");
-          assertEquals(res.status, 500);
-          assertEquals(res.text, "Internal Server Error");
-          done();
-        });
+        .expect(500)
+        .expect("Internal Server Error", done);
     });
 
     it("should be catchable", async () => {
@@ -787,14 +740,7 @@ describe("app.respond", () => {
         superdeno(server)
           .get("/")
           .expect(404)
-          .expect("")
-          .end((err, res) => {
-            assertEquals(err.message, "Not Found");
-            assertEquals(res.status, 404);
-            assertEquals(res.text, "");
-            assertEquals(res.body, null);
-            done();
-          });
+          .expect("", done);
       });
 
       it("should respond with correct headers", (done) => {
@@ -810,15 +756,7 @@ describe("app.respond", () => {
         superdeno(server)
           .get("/")
           .expect(401)
-          .expect("")
-          .end((err, res) => {
-            assertEquals(err.message, "Unauthorized");
-            assertEquals(res.status, 401);
-            assertEquals(res.text, "");
-            assertEquals(res.body, null);
-            assert(!(res as any).headers["content-type"]);
-            done();
-          });
+          .expect("", done);
       });
     });
   });

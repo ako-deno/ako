@@ -36,13 +36,7 @@ describe("app.use(fn)", () => {
 
     superdeno(server)
       .get("/")
-      .expect(404)
-      .end((err, res) => {
-        assertEquals(err.message, "Not Found");
-        assertEquals(res.status, 404);
-        assertEquals(calls, [1, 2, 3, 4, 5, 6]);
-        done();
-      });
+      .expect(404, done);
   });
 
   // https://github.com/koajs/koa/pull/530#issuecomment-148138051
@@ -53,11 +47,6 @@ describe("app.use(fn)", () => {
 
     superdeno(app)
       .get("/")
-      .expect(404)
-      .end((err, res) => {
-        assertEquals(err.message, "Not Found");
-        assertEquals(res.status, 404);
-        done();
-      });
+      .expect(404, done);
   });
 });
