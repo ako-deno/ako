@@ -31,24 +31,16 @@ import {
   Accepts,
 } from "../deps.ts";
 import { parse as contentTypeParse } from "../deps.ts";
+import { BaseRequest } from "./koa_type.ts";
 
-const fullHref = Symbol("fullHref");
-const queryCache = Symbol("queryCache");
-const memoizedURL = Symbol("memoizedURL");
-const _IP = Symbol("ip");
-const _ACCEPT = Symbol("accept");
+const REQUEST_QUERY_CACHE = Symbol("AKO#REQUEST_QUERY_CACHE");
+const REQUEST_MEMOIZED_URL = Symbol("AKO#REQUEST_MEMOIZED_URL");
+const REQUEST_IP = Symbol("REQUEST_IP");
+const REQUEST_ACCEPT = Symbol("AKO#REQUEST_ACCEPT");
 
 export type QueryStringObject = { [key: string]: string[] | string };
 
-export const Request = {
-  get [fullHref](): string {
-    // support: `GET http://example.com/foo`
-    if (/^https?:\/\//i.test(this.url)) return this.url;
-    return this.origin + this.url;
-  },
-
-  [queryCache]: new Map(),
-
+export const Request: BaseRequest = {
   /**
    * Return request header.
    */
@@ -129,7 +121,7 @@ export const Request = {
    * Get request pathname.
    */
   get path(): string {
-    const url = new URL(this[fullHref]);
+    const url = new URL(this.origin + this.url);
     return url.pathname;
   },
 
@@ -137,7 +129,7 @@ export const Request = {
    * Set pathname, retaining the query-string when present.
    */
   set path(path: string) {
-    const url = new URL(this[fullHref]);
+    const url = new URL(this.origin + this.url);
     if (url.pathname === path) {
       return;
     }
@@ -150,7 +142,10 @@ export const Request = {
    */
   get query(): QueryStringObject {
     const str = this.querystring;
-    const c = this[queryCache];
+    if (!(this as any)[REQUEST_QUERY_CACHE]) {
+      (this as any)[REQUEST_QUERY_CACHE] = new Map();
+    }
+    const c = (this as any)[REQUEST_QUERY_CACHE];
     if (c.has(str)) {
       return c.get(str) || {};
     }
@@ -171,7 +166,7 @@ export const Request = {
    */
   get querystring(): string {
     if (!(this as any).req) return "";
-    const url = new URL(this[fullHref]);
+    const url = new URL(this.origin + this.url);
     if (url.search.length >= 1) {
       return url.search.slice(1);
     } else {
@@ -183,7 +178,7 @@ export const Request = {
    * Set querystring.
    */
   set querystring(str: string) {
-    const url = new URL(this[fullHref]);
+    const url = new URL(this.origin + this.url);
     if (url.search === `?${str}`) return;
     url.search = `?${str}`;
     this.url = `${url.pathname}?${str}`;
@@ -194,7 +189,7 @@ export const Request = {
    * except it includes the leading ?.
    */
   get search(): string {
-    const url = new URL(this[fullHref]);
+    const url = new URL(this.origin + this.url);
     return url.search;
   },
 
@@ -233,22 +228,20 @@ export const Request = {
     return host.split(":", 1)[0];
   },
 
-  [memoizedURL]: undefined,
-
   /**
    * Get WHATWG parsed original URL.
    * Lazily memoized.
    */
 
   get URL(): URL | null {
-    if ((this as any)[memoizedURL] == undefined) {
+    if (!(this as any)[REQUEST_MEMOIZED_URL]) {
       try {
-        (this as any)[memoizedURL] = new URL(this.href);
+        (this as any)[REQUEST_MEMOIZED_URL] = new URL(this.href);
       } catch (err) {
-        (this as any)[memoizedURL] = null;
+        (this as any)[REQUEST_MEMOIZED_URL] = null;
       }
     }
-    return (this as any)[memoizedURL];
+    return (this as any)[REQUEST_MEMOIZED_URL];
   },
 
   /**
@@ -361,15 +354,15 @@ export const Request = {
    * the "X-Forwarded-For" ip address list and return the first one
    */
   get ip(): string {
-    if (!(this as any)[_IP]) {
-      (this as any)[_IP] = this.ips[0] ||
+    if (!(this as any)[REQUEST_IP]) {
+      (this as any)[REQUEST_IP] = this.ips[0] ||
         (this.socket.remoteAddr as Deno.NetAddr).hostname || "";
     }
-    return (this as any)[_IP];
+    return (this as any)[REQUEST_IP];
   },
 
   set ip(_ip: string) {
-    (this as any)[_IP] = _ip;
+    (this as any)[REQUEST_IP] = _ip;
   },
 
   /**
@@ -401,9 +394,9 @@ export const Request = {
    * @return {Object}
    * @api private
    */
-  get accept(): Accepts | null {
-    return (this as any)[_ACCEPT] ||
-      ((this as any)[_ACCEPT] = new Accepts((this as any).req.headers));
+  get accept(): Accepts {
+    return (this as any)[REQUEST_ACCEPT] ||
+      ((this as any)[REQUEST_ACCEPT] = new Accepts((this as any).req.headers));
   },
 
   /**
@@ -412,8 +405,8 @@ export const Request = {
    * @param {Accepts}
    * @api private
    */
-  set accept(obj: Accepts | null) {
-    (this as any)[_ACCEPT] = obj;
+  set accept(obj: Accepts) {
+    (this as any)[REQUEST_ACCEPT] = obj;
   },
 
   /**

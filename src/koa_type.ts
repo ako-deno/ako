@@ -470,6 +470,10 @@ export interface BaseRequest extends ContextDelegatedRequest {
    */
   type: string;
 
+  ip: string;
+
+  accept: Accepts;
+
   /**
    * Inspect implementation.
    */
@@ -598,8 +602,6 @@ export interface Request extends BaseRequest {
   ctx: Context;
   response: Response;
   originalUrl: string;
-  ip: string;
-  accept: Accepts;
 }
 
 export interface Response extends BaseResponse {
@@ -619,7 +621,7 @@ export interface ExtendableContext extends BaseContext {
   res: ServerResponse;
   originalUrl: string;
   // cookies: Cookies;
-  // accept: accepts.Accepts;
+  accept: Accepts | null;
   /**
    * To bypass Koa's built-in response handling, you may explicitly set `ctx.respond = false;`
    */
