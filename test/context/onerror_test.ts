@@ -8,7 +8,7 @@ import {
 } from "../deps.ts";
 
 describe("ctx.onerror(err)", () => {
-  it("should respond", async () => {
+  it("should respond", (done) => {
     const app = new Application();
 
     app.use((ctx, next) => {
@@ -18,14 +18,12 @@ describe("ctx.onerror(err)", () => {
 
     const server = app.listen();
 
-    const res = await superdeno(server)
-      .head("/")
+    superdeno(server)
+      .get("/")
       .expect(418)
       .expect("Content-Length", "4")
-      .expect("Content-Type", "text/plain; charset=utf-8");
-
-    // TODO: https://github.com/asos-craigmorten/superdeno/issues/11
-    // assertEquals(res.text, "boom");
+      .expect("Content-Type", "text/plain; charset=utf-8")
+      .expect("boom", done);
   });
 
   it("should unset all headers", async () => {
@@ -42,12 +40,11 @@ describe("ctx.onerror(err)", () => {
     const server = app.listen();
 
     const res = await superdeno(server)
-      .head("/")
+      .get("/")
       .expect(418)
       .expect("Content-Length", "4")
       .expect("Content-Type", "text/plain; charset=utf-8");
-    // TODO: https://github.com/asos-craigmorten/superdeno/issues/11
-    // assertEquals(res.text, "boom");
+    assertEquals((res as any).text, "boom");
     assert(!(res as any).headers.vary);
     assert(!(res as any).headers["x-csrf-token"]);
   });
@@ -72,14 +69,13 @@ describe("ctx.onerror(err)", () => {
     const server = app.listen();
 
     const res = await superdeno(server)
-      .head("/")
+      .get("/")
       .expect(418)
       .expect("Content-Length", "4")
       .expect("Content-Type", "text/plain; charset=utf-8")
       .expect("X-New-Header", "Value");
 
-    // TODO: https://github.com/asos-craigmorten/superdeno/issues/11
-    // assertEquals(res.text, "boom");
+    assertEquals((res as any).text, "boom");
     assert(!(res as any).headers.vary);
     assert(!(res as any).headers["x-csrf-token"]);
     assert((res as any).headers["x-new-header"]);
@@ -97,11 +93,10 @@ describe("ctx.onerror(err)", () => {
 
     const server = app.listen();
     superdeno(server)
-      .head("/")
+      .get("/")
       .expect(404)
-      .expect("Content-Type", "text/plain; charset=utf-8", done);
-    // TODO: https://github.com/asos-craigmorten/superdeno/issues/11
-    //.expect("Not Found", done)
+      .expect("Content-Type", "text/plain; charset=utf-8")
+      .expect("Not Found", done);
   });
 
   describe("when invalid err.status", () => {
@@ -118,13 +113,13 @@ describe("ctx.onerror(err)", () => {
 
         const server = app.listen();
         superdeno(server)
-          .head("/")
+          .get("/")
           .expect(500)
-          .expect("Content-Type", "text/plain; charset=utf-8", done);
-        // TODO: https://github.com/asos-craigmorten/superdeno/issues/11
-        // .expect("Internal Server Error")
+          .expect("Content-Type", "text/plain; charset=utf-8")
+          .expect("Internal Server Error", done);
       });
     });
+
     describe("when ENOENT error", () => {
       it("should respond 404", (done) => {
         const app = new Application();
@@ -139,11 +134,10 @@ describe("ctx.onerror(err)", () => {
         const server = app.listen();
 
         superdeno(server)
-          .head("/")
+          .get("/")
           .expect(404)
-          .expect("Content-Type", "text/plain; charset=utf-8", done);
-        // TODO: https://github.com/asos-craigmorten/superdeno/issues/11
-        // .expect("Not Found")
+          .expect("Content-Type", "text/plain; charset=utf-8")
+          .expect("Not Found", done);
       });
     });
     describe("not http status code", () => {
@@ -160,11 +154,10 @@ describe("ctx.onerror(err)", () => {
         const server = app.listen();
 
         superdeno(server)
-          .head("/")
+          .get("/")
           .expect(500)
-          .expect("Content-Type", "text/plain; charset=utf-8", done);
-        // TODO: https://github.com/asos-craigmorten/superdeno/issues/11
-        // .expect("Internal Server Error")
+          .expect("Content-Type", "text/plain; charset=utf-8")
+          .expect("Internal Server Error", done);
       });
     });
   });
@@ -179,11 +172,10 @@ describe("ctx.onerror(err)", () => {
 
       const server = app.listen();
       superdeno(server)
-        .head("/")
+        .get("/")
         .expect(500)
-        .expect("Content-Type", "text/plain; charset=utf-8", done);
-      // TODO: https://github.com/asos-craigmorten/superdeno/issues/11
-      // .expect("Internal Server Error")
+        .expect("Content-Type", "text/plain; charset=utf-8")
+        .expect("Internal Server Error", done);
     });
 
     /*

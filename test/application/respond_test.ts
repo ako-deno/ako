@@ -289,7 +289,7 @@ describe("app.respond", () => {
 
       const server = app.listen();
       superdeno(server)
-        .head("/")
+        .get("/")
         .expect(404, done);
     });
   });
