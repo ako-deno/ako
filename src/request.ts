@@ -29,9 +29,10 @@ import {
   isIP,
   typeofrequest,
   Accepts,
+  fresh,
 } from "../deps.ts";
 import { parse as contentTypeParse } from "../deps.ts";
-import { BaseRequest } from "./koa_type.ts";
+import { BaseRequest, Request as IRequest } from "./koa_type.ts";
 
 const REQUEST_QUERY_CACHE = Symbol("AKO#REQUEST_QUERY_CACHE");
 const REQUEST_MEMOIZED_URL = Symbol("AKO#REQUEST_MEMOIZED_URL");
@@ -107,14 +108,14 @@ export const Request: BaseRequest = {
    * Get request method.
    */
   get method(): string {
-    return (this as any).req.method;
+    return (this as IRequest).req.method;
   },
 
   /**
    * Set request method.
    */
   set method(val) {
-    (this as any).req.method = val;
+    (this as IRequest).req.method = val;
   },
 
   /**
@@ -165,7 +166,7 @@ export const Request: BaseRequest = {
    * Get query string.
    */
   get querystring(): string {
-    if (!(this as any).req) return "";
+    if (!(this as IRequest).req) return "";
     const url = new URL(this.origin + this.url);
     if (url.search.length >= 1) {
       return url.search.slice(1);
@@ -207,7 +208,7 @@ export const Request: BaseRequest = {
    * proxy is enabled.
    */
   get host(): string {
-    const proxy = (this as any).app.proxy;
+    const proxy = (this as IRequest).app.proxy;
     let host = proxy && this.get("X-Forwarded-Host");
     if (!host) {
       host = this.get("Host");
@@ -254,7 +255,17 @@ export const Request: BaseRequest = {
    */
 
   get fresh(): boolean {
-    // todo: TBD
+    const method = this.method;
+    const s = (this as IRequest).ctx.status;
+
+    // GET or HEAD for weak freshness validation only
+    if ("GET" !== method && "HEAD" !== method) return false;
+
+    // 2xx or 304 as per rfc2616 14.26
+    if ((s >= 200 && s < 300) || 304 === s) {
+      return fresh(this.header, (this as IRequest).response.header);
+    }
+
     return false;
   },
 
@@ -283,7 +294,7 @@ export const Request: BaseRequest = {
    * Return the request conn.
    */
   get socket(): Deno.Conn {
-    return (this as any).req.conn;
+    return (this as IRequest).req.conn;
   },
 
   /**
@@ -316,7 +327,7 @@ export const Request: BaseRequest = {
    * may be enabled.
    */
   get protocol(): string {
-    if (!(this as any).app.proxy) return "http";
+    if (!(this as IRequest).app.proxy) return "http";
     const proto = this.get("X-Forwarded-Proto");
     return proto ? proto.split(/\s*,\s*/, 1)[0] : "http";
   },
@@ -339,11 +350,11 @@ export const Request: BaseRequest = {
    * where "proxy2" is the furthest down-stream.
    */
   get ips(): string[] {
-    const proxy = (this as any).app.proxy;
-    const val = this.get((this as any).app.proxyIpHeader);
+    const proxy = (this as IRequest).app.proxy;
+    const val = this.get((this as IRequest).app.proxyIpHeader);
     let ips = proxy && val ? val.split(/\s*,\s*/) : [];
-    if ((this as any).app.maxIpsCount > 0) {
-      ips = ips.slice(-(this as any).app.maxIpsCount);
+    if ((this as IRequest).app.maxIpsCount > 0) {
+      ips = ips.slice(-(this as IRequest).app.maxIpsCount);
     }
     return ips;
   },
@@ -378,7 +389,7 @@ export const Request: BaseRequest = {
    * If `app.subdomainOffset` is 3, this.subdomains is `["tobi"]`.
    */
   get subdomains(): string[] {
-    const offset = (this as any).app.subdomainOffset;
+    const offset = (this as IRequest).app.subdomainOffset;
     const hostname = this.hostname;
     if (isIP(hostname)) return [];
     return hostname
@@ -533,7 +544,7 @@ export const Request: BaseRequest = {
    */
 
   is(types: string[]): null | boolean | string {
-    return typeofrequest((this as any).req.headers, types);
+    return typeofrequest((this as IRequest).req.headers, types);
   },
 
   /**
@@ -554,7 +565,7 @@ export const Request: BaseRequest = {
    *     // => ''
    */
   get(field: string): string {
-    const req = (this as any).req;
+    const req = (this as IRequest).req;
     switch (field = field.toLowerCase()) {
       case "referer":
       case "referrer":
@@ -586,7 +597,7 @@ export const Request: BaseRequest = {
    */
 
   inspect() {
-    if (!(this as any).req) return;
+    if (!(this as IRequest).req) return;
     return this.toJSON();
   },
 

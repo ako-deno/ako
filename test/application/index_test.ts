@@ -7,7 +7,7 @@ import { HttpError as AkoHttpError } from "../../mod.ts";
 import {
   assert,
   assertEquals,
-  assertStrictEq,
+  assertStrictEquals,
   assertNotEquals,
 } from "../deps.ts";
 
@@ -23,26 +23,26 @@ describe("app", () => {
   it("should set env from the constructor", () => {
     const env = "custom";
     const app = new Application({ env });
-    assertStrictEq(app.env, env);
+    assertStrictEquals(app.env, env);
   });
 
   it("should set proxy flag from the constructor", () => {
     const proxy = true;
     const app = new Application({ proxy });
-    assertStrictEq(app.proxy, proxy);
+    assertStrictEquals(app.proxy, proxy);
   });
 
   // todo
   // it('should set signed cookie keys from the constructor', () => {
   //   const keys = ['customkey'];
   //   const app = new Application({ keys });
-  //   assertStrictEq(app.keys, keys);
+  //   assertStrictEquals(app.keys, keys);
   // });
 
   it("should set subdomainOffset from the constructor", () => {
     const subdomainOffset = 3;
     const app = new Application({ subdomainOffset });
-    assertStrictEq(app.subdomainOffset, subdomainOffset);
+    assertStrictEquals(app.subdomainOffset, subdomainOffset);
   });
 
   it("should have a exported property `HttpError` from http-errors library", () => {

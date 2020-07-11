@@ -4,7 +4,7 @@ import {
 import { superdeno, describe, it } from "../deps.ts";
 import {
   assertEquals,
-  assertStrictEq,
+  assertStrictEquals,
 } from "../deps.ts";
 
 describe("app.response", () => {
@@ -50,7 +50,7 @@ describe("app.response", () => {
   it("should set ._explicitNullBody correctly", async () => {
     app4.use((ctx, next) => {
       ctx.body = null;
-      assertStrictEq(ctx.response._explicitNullBody, true);
+      assertStrictEquals(ctx.response._explicitNullBody, true);
     });
 
     await superdeno(app4)
@@ -61,11 +61,11 @@ describe("app.response", () => {
   it("should not set ._explicitNullBody incorrectly", async () => {
     app5.use((ctx, next) => {
       ctx.body = undefined;
-      assertStrictEq(ctx.response._explicitNullBody, undefined);
+      assertStrictEquals(ctx.response._explicitNullBody, undefined);
       ctx.body = "";
-      assertStrictEq(ctx.response._explicitNullBody, undefined);
+      assertStrictEquals(ctx.response._explicitNullBody, undefined);
       ctx.body = false;
-      assertStrictEq(ctx.response._explicitNullBody, undefined);
+      assertStrictEquals(ctx.response._explicitNullBody, undefined);
     });
 
     await superdeno(app5)

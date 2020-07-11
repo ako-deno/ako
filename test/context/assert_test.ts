@@ -1,4 +1,4 @@
-import { describe, it, assertEquals, assertStrictEq } from "../deps.ts";
+import { describe, it, assertEquals, assertStrictEquals } from "../deps.ts";
 import { context } from "../helpers/context.ts";
 
 describe("ctx.assert(value, status)", () => {
@@ -10,7 +10,7 @@ describe("ctx.assert(value, status)", () => {
       throw new Error("asdf");
     } catch (err) {
       assertEquals(err.status, 404);
-      assertStrictEq(err.expose, true);
+      assertStrictEquals(err.expose, true);
     }
   });
 });
