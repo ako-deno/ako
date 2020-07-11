@@ -562,9 +562,7 @@ export const Response: BaseResponse = {
 
   toJSON(): any {
     const header: any = {};
-    this.header.forEach((v, k) => {
-      header[k] = v;
-    });
+    this.header.forEach((v, k) => header[k] = v);
     return {
       status: this.status,
       message: this.message,

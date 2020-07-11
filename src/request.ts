@@ -609,10 +609,12 @@ export const Request: BaseRequest = {
    */
 
   toJSON() {
-    return [
-      this.method,
-      this.url,
-      this.header,
-    ];
+    const header: any = {};
+    this.header.forEach((v, k) => header[k] = v);
+    return {
+      method: this.method,
+      url: this.url,
+      header,
+    };
   },
 };
