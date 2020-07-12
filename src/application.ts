@@ -55,7 +55,7 @@ import {
 
 const appDebug = debug("ako:application");
 
-interface ApplicationOptions {
+export interface ApplicationOptions {
   proxy?: boolean;
   proxyIpHeader?: string;
   maxIpsCount?: number;
@@ -63,7 +63,7 @@ interface ApplicationOptions {
   subdomainOffset?: number;
 }
 
-class Application<
+export class Application<
   StateT = DefaultState,
   CustomT = DefaultContext,
 > extends EventEmitter implements IApplication<StateT, CustomT> {
@@ -295,11 +295,3 @@ class Application<
     return ctx.req.respond(Object.assign({}, ctx.res, { body }));
   }
 }
-
-export {
-  Application,
-  ServerRequest,
-  Server,
-  HTTPOptions,
-  ApplicationOptions,
-};
