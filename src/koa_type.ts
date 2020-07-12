@@ -477,7 +477,7 @@ export interface BaseRequest extends ContextDelegatedRequest {
   /**
    * Inspect implementation.
    */
-  inspect(): any;
+  inspect(): string;
 
   /**
    * Return JSON representation.
@@ -537,7 +537,7 @@ export interface BaseResponse extends ContextDelegatedResponse {
   /**
    * Inspect implementation.
    */
-  inspect(): any;
+  inspect(): string;
 
   /**
    * Return JSON representation.
@@ -550,7 +550,7 @@ export interface ProtoContext {
    * util.inspect() implementation, which
    * just returns the JSON output.
    */
-  inspect(): any;
+  inspect(): string;
 
   /**
    * Return JSON representation.
@@ -656,7 +656,7 @@ export interface IApplication<
   silent: boolean | undefined;
   // keys: Keygrip | string[];
 
-  inspect(): any;
+  inspect(): string;
 
   /**
    * Return JSON representation.

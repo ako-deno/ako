@@ -11,7 +11,7 @@ describe("app.inspect()", () => {
 
   it("should return a json representation", () => {
     assertEquals(
-      { subdomainOffset: 2, proxy: false, env: "development" },
+      Deno.inspect({ subdomainOffset: 2, proxy: false, env: "development" }),
       app.inspect(),
     );
   });

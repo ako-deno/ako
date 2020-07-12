@@ -39,13 +39,13 @@ export const context: ProtoContext = {
    * inspect() implementation, which
    * just returns the JSON output.
    *
-   * @return {Object}
+   * @return {string}
    * @api public
    */
 
-  inspect() {
-    if (this === context) return this;
-    return this.toJSON();
+  inspect(): string {
+    if (this === context) return Deno.inspect(this);
+    return Deno.inspect(this.toJSON());
   },
 
   /**
@@ -169,6 +169,8 @@ export const context: ProtoContext = {
   // set cookies(_cookies) {
   // }
 };
+
+(context as any)[Deno.customInspect] = context.inspect;
 
 /**
  * Response delegation.

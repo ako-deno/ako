@@ -193,8 +193,12 @@ export class Application<
     return server;
   }
 
-  inspect(): any {
-    return this.toJSON();
+  inspect(): string {
+    return Deno.inspect(this.toJSON());
+  }
+
+  [Deno.customInspect](): string {
+    return this.inspect();
   }
 
   toJSON(): any {

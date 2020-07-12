@@ -592,13 +592,13 @@ export const Request: BaseRequest = {
   /**
    * Inspect implementation.
    *
-   * @return {Object}
+   * @return {string}
    * @api public
    */
 
-  inspect() {
-    if (!(this as IRequest).req) return;
-    return this.toJSON();
+  inspect(): string {
+    if (!(this as IRequest).req) return "undefined";
+    return Deno.inspect(this.toJSON());
   },
 
   /**
@@ -618,3 +618,5 @@ export const Request: BaseRequest = {
     };
   },
 };
+
+(Request as any)[Deno.customInspect] = Request.inspect;

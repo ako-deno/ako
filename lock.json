@@ -62,7 +62,7 @@
   "https://deno.land/x/type_is@1.0.1/deps.ts": "e02cf93f70606ab11e8b601860625788958db686280fdfad5b6db1546bd879c4",
   "https://deno.land/x/type_is@1.0.1/mod.ts": "3e471cf55f7ca9ec137ddb5feacb0d33b26e6b5b61bf7b2e2a4337b6939b8fd8",
   "https://deno.land/x/vary@1.0.0/mod.ts": "e7c452694b21336419f16e0891f8ea503adaafc7bde956fb29e1a86f450a68e6",
-  "https://raw.githubusercontent.com/ako-deno/delegates/master/mod.ts": "464367291fd1b91f428b5cc51a28c2d5a8f6283fa0debef9a5ef0187342bd999",
+  "https://raw.githubusercontent.com/ako-deno/delegates/master/mod.ts": "c7905a089e6ee400e939913895ced0072e96842cda23b9581967203e3bbba6e3",
   "https://raw.githubusercontent.com/denolib/camelcase/master/mod.ts": "005e33da0b4abcd8a71b62ff5a288b2d10a6a29bb56726c9ee6dd8e6854b7281",
   "https://raw.githubusercontent.com/denolib/ms/master/ms.ts": "13014fdf12808df48f6e557cc3be22d24db5b8e29b687d710f9012df3428d2c8"
 }

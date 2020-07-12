@@ -542,15 +542,15 @@ export const Response: BaseResponse = {
   /**
    * Inspect implementation.
    *
-   * @return {Object}
+   * @return {string}
    * @api public
    */
 
-  inspect() {
-    if (!(this as any).res) return;
+  inspect(): string {
+    if (!(this as any).res) return "undefined";
     const o = this.toJSON();
     o.body = this.body;
-    return o;
+    return Deno.inspect(o);
   },
 
   /**
@@ -576,3 +576,5 @@ export const Response: BaseResponse = {
   flushHeaders(): void {
   },
 };
+
+(Response as any)[Deno.customInspect] = Response.inspect;
