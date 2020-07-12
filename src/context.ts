@@ -98,7 +98,7 @@ export const context: ProtoContext = {
    *
    * See: https://deno.land/x/http_errors
    */
-  throw(status: number, message?: any, props?: any): never {
+  throw(status: any, message?: any, props?: any): never {
     throw createError(status, message, props);
   },
 

@@ -584,6 +584,7 @@ export interface ProtoContext {
    */
   throw(status: number, message?: string, props?: Props): never;
   throw(status: number, props: Props): never;
+  throw(error: Error, props?: Props): never;
 
   /**
    * Default error handling.

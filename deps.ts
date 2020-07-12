@@ -21,7 +21,7 @@ export {
   createError,
   HttpError,
   Props,
-} from "https://deno.land/x/http_errors/mod.ts";
+} from "https://deno.land/x/http_errors@2.1.0/mod.ts";
 export { Status, STATUS_TEXT } from "https://deno.land/std@0.60.0/http/mod.ts";
 export { is, typeofrequest, hasBody } from "https://deno.land/x/type_is/mod.ts";
 export { Accepts } from "https://deno.land/x/accepts/mod.ts";
