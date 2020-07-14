@@ -44,7 +44,12 @@ export const context: ProtoContext = {
    */
 
   inspect(): string {
-    if (this === context) return Deno.inspect(this);
+    if (this === context) {
+      const o: any = {};
+      Object.assign(o, this);
+      delete o.inspect;
+      return Deno.inspect(o);
+    }
     return Deno.inspect(this.toJSON());
   },
 
