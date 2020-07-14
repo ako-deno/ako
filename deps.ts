@@ -37,8 +37,8 @@ export {
   is,
   typeofrequest,
   hasBody,
-} from "https://deno.land/x/type_is@1.0.1/mod.ts";
-export { Accepts } from "https://deno.land/x/accepts@1.0.0/mod.ts";
+} from "https://deno.land/x/type_is@1.0.2/mod.ts";
+export { Accepts } from "https://deno.land/x/accepts@1.0.1/mod.ts";
 
 import fresh from "https://deno.land/x/fresh@v1.0.0/mod.ts";
 export { fresh };
