@@ -456,22 +456,15 @@ export const Request: BaseRequest = {
    *     // => "json"
    *
    * @param {Array|String} type(s)...
-   * @return {Array|string|boolean}
+   * @return {Array|String|False}
    * @api public
    */
 
-  accepts(types?: string[] | string): string[] | string | boolean {
+  accepts(types?: string[] | string): string[] | string | false {
     if (typeof types === "string") {
       types = [types];
     }
-    const type = this.accept!.types(types);
-    if (type.length === 0) {
-      return false;
-    }
-    if (type.length === 1) {
-      return type[0];
-    }
-    return type;
+    return this.accept!.types(types);
   },
 
   /**
@@ -483,11 +476,13 @@ export const Request: BaseRequest = {
    *     ['gzip', 'deflate']
    *
    * @param {String|Array} encoding(s)...
-   * @return {String|Array}
+   * @return {Array|String|False}
    * @api public
    */
-
-  acceptsEncodings(encodings?: string[]): string[] {
+  acceptsEncodings(encodings?: string[] | string): string[] | string | false {
+    if (typeof encodings === "string") {
+      encodings = [encodings];
+    }
     return this.accept!.encodings(encodings);
   },
 
@@ -500,11 +495,14 @@ export const Request: BaseRequest = {
    *     ['utf-8', 'utf-7', 'iso-8859-1']
    *
    * @param {String|Array} charset(s)...
-   * @return {String|Array}
+   * @return {Array|String|False}
    * @api public
    */
 
-  acceptsCharsets(charsets: string[]): string[] {
+  acceptsCharsets(charsets?: string[] | string): string[] | string | false {
+    if (typeof charsets === "string") {
+      charsets = [charsets];
+    }
     return this.accept!.charsets(charsets);
   },
 
@@ -517,11 +515,14 @@ export const Request: BaseRequest = {
    *     ['es', 'pt', 'en']
    *
    * @param {String|Array} lang(s)...
-   * @return {Array|String}
+   * @return {Array|String|False}
    * @api public
    */
 
-  acceptsLanguages(languages: string[]): string[] {
+  acceptsLanguages(languages?: string[] | string): string[] | string | false {
+    if (typeof languages === "string") {
+      languages = [languages];
+    }
     return this.accept!.languages(languages);
   },
 

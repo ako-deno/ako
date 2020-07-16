@@ -22,7 +22,7 @@ describe("ctx.accept=", () => {
       "accept",
       "text/plain",
     );
-    assertEquals(ctx.accepts(), "text/plain");
+    assertEquals(ctx.accepts(), ["text/plain"]);
 
     const req = request();
     req.headers.set(

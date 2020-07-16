@@ -200,8 +200,7 @@ export interface ContextDelegatedRequest {
    *     this.accepts(['html', 'json']);
    *     // => "json"
    */
-  accepts(types: string): string[] | string | boolean;
-  accepts(types?: string[]): string[] | string | boolean;
+  accepts(types?: string[] | string): string[] | string | false;
 
   /**
    * Return accepted encodings or best fit based on `encodings`.
@@ -211,7 +210,7 @@ export interface ContextDelegatedRequest {
    *
    *     ['gzip', 'deflate']
    */
-  acceptsEncodings(encodings?: string[]): string[];
+  acceptsEncodings(encodings?: string[] | string): string[] | string | false;
 
   /**
    * Return accepted charsets or best fit based on `charsets`.
@@ -221,7 +220,7 @@ export interface ContextDelegatedRequest {
    *
    *     ['utf-8', 'utf-7', 'iso-8859-1']
    */
-  acceptsCharsets(charsets?: string[]): string[];
+  acceptsCharsets(charsets?: string[] | string): string[] | string | false;
 
   /**
    * Return accepted languages or best fit based on `langs`.
@@ -231,7 +230,7 @@ export interface ContextDelegatedRequest {
    *
    *     ['es', 'pt', 'en']
    */
-  acceptsLanguages(langs?: string[]): string[];
+  acceptsLanguages(langs?: string[] | string): string[] | string | false;
 
   /**
    * Check if the incoming request contains the "Content-Type"
