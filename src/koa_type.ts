@@ -186,7 +186,7 @@ export interface ContextDelegatedRequest {
    *     // => "html"
    *     this.accepts('text/html');
    *     // => "text/html"
-   *     this.accepts('json', 'text');
+   *     this.accepts(['json', 'text']);
    *     // => "json"
    *     this.accepts('application/json');
    *     // => "application/json"
@@ -198,12 +198,10 @@ export interface ContextDelegatedRequest {
    *
    *     // Accept: text/*;q=.5, application/json
    *     this.accepts(['html', 'json']);
-   *     this.accepts('html', 'json');
    *     // => "json"
    */
-  // accepts(): string[] | boolean;
-  // accepts(...types: string[]): string | boolean;
-  accepts(types?: string[]): string[];
+  accepts(types: string): string[] | string | boolean;
+  accepts(types?: string[]): string[] | string | boolean;
 
   /**
    * Return accepted encodings or best fit based on `encodings`.

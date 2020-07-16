@@ -453,16 +453,25 @@ export const Request: BaseRequest = {
    *
    *     // Accept: text/*;q=.5, application/json
    *     this.accepts(['html', 'json']);
-   *     this.accepts('html', 'json');
    *     // => "json"
    *
-   * @param {Array} type(s)...
-   * @return {Array}
+   * @param {Array|String} type(s)...
+   * @return {Array|string|boolean}
    * @api public
    */
 
-  accepts(types?: string[]): string[] {
-    return this.accept!.types(types);
+  accepts(types?: string[] | string): string[] | string | boolean {
+    if (typeof types === "string") {
+      types = [types];
+    }
+    const type = this.accept!.types(types);
+    if (type.length === 0) {
+      return false;
+    }
+    if (type.length === 1) {
+      return type[0];
+    }
+    return type;
   },
 
   /**
